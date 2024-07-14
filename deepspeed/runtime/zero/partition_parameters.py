@@ -1692,8 +1692,9 @@ class Init(InsertPostInitMethodToModuleSubClasses):
             sec_numel = max(0, min(param.ds_numel - secondary_start, secondary_partition_size))
 
             # copy from full tensor to secondary tensor
-            param.ds_secondary_tensor.narrow(0, 0,
-                                             sec_numel).copy_(one_dim_param.narrow(0, secondary_start, sec_numel))
+            if sec_numel > 0:
+                param.ds_secondary_tensor.narrow(0, 0,
+                                                sec_numel).copy_(one_dim_param.narrow(0, secondary_start, sec_numel))
 
             # TODO: This is a temporary fix to avoid the issue that 2nd tensor all-gather happens before 2nd tensor partition is done
             if not get_accelerator().resolves_data_dependency():
